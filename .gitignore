@@ -2,14 +2,14 @@
 #
 # Get latest from https://github.com/github/gitignore/blob/main/Unity.gitignore
 #
-/UnityTP/Temp
-/[Ll]ibrary/
-/[Tt]emp/
-/[Oo]bj/
-/[Bb]uild/
-/[Bb]uilds/
-/[Ll]ogs/
-/[Uu]ser[Ss]ettings/
+UnityTP/Temp
+UnityTP/[Ll]ibrary/
+UnityTP/[Tt]emp/
+UnityTP/[Oo]bj/
+UnityTP/[Bb]uild/
+UnityTP/[Bb]uilds/
+UnityTP/[Ll]ogs/
+UnityTP/[Uu]ser[Ss]ettings/
 
 # MemoryCaptures can get excessive in size.
 # They also could contain extremely sensitive data
@@ -74,3 +74,6 @@ crashlytics-build.properties
 
 # Ignorer les fichiers volumineux Unity
 UnityTP/Library/PackageCache
+
+# Ingorer les fichiers users
+UnityTP/UserSettings
