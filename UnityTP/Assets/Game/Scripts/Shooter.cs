@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 public class Shooter : MonoBehaviour
 {
@@ -7,67 +8,68 @@ public class Shooter : MonoBehaviour
     public float shootForce = 5f; // Force du projecrile
     public float fireRate = 0.5f; // Temps de wait entre deux tirs (en secondes)
 
-    private float _nextFireTime = 0f; // Chrono cadence de tir
-    private int _painCount = 0; // Compteur pour le nombre de pains tir�s
 
-    private void Update()
+    private PlayerInputAction _myInputAction;
+
+    private float _nextFireTime; // Chrono cadence de tir
+    private int _painCount; // Compteur pour le nombre de pains tir�s
+    private InputAction _shootAction;
+
+
+    // Initialization
+    private void Awake()
     {
-        // V�rifie si le joueur appuie sur la touche "Espace" et que le temps entre les tirs est respect�
-        if (Input.GetKey(KeyCode.Space) && Time.time >= _nextFireTime)
-        {
-            Shoot();
-            _nextFireTime = Time.time + fireRate; // D�termine le prochain moment o� on peut tirer
-        }
+        _myInputAction = new PlayerInputAction();
     }
 
-    private void Shoot()
+    private void OnEnable()
     {
-        if (painPrefab == null || spawnPoint == null)
-        {
-            Debug.LogError("Pain prefab ou spawnPoint non assign�!");
-            return;
-        }
+        _shootAction = _myInputAction.Player.Fire;
+        _shootAction.performed += Shoot;
+        _shootAction.Enable();
+    }
 
-        // Cr�e une instance du prefab
-        GameObject painInstance = Instantiate(painPrefab, spawnPoint.position, spawnPoint.rotation);
+    private void OnDisable()
+    {
+        _shootAction.Disable();
+    }
 
-        // Applique une force pour propulser le pain
-        Rigidbody rb = painInstance.GetComponent<Rigidbody>();
+    private void Shoot(InputAction.CallbackContext callbackContext)
+    {
+        // Check if enough time has passed before shooting again
+        if (Time.time < _nextFireTime) return; // If the cooldown hasn't passed, don't shoot
+
+        // Update the next fire time based on the current time and the fire rate
+        _nextFireTime = Time.time + fireRate;
+
+        // Create an instance of the bread prefab
+        var painInstance = Instantiate(painPrefab, spawnPoint.position, spawnPoint.rotation);
+
+        // Rotate the prefab 180° along the X-axis (if needed)
+        painInstance.transform.Rotate(180f, 0f, 0f);
+
+        // Scale down the bread object
+        painInstance.transform.localScale = new Vector3(0.5f, 0.5f, 0.5f);
+        
+        // Add the BreadCollision script to handle collision
+        painInstance.AddComponent<BreadCollision>();
+
+        // Apply force to propel the bread in the opposite direction
+        var rb = painInstance.GetComponent<Rigidbody>();
         if (rb != null)
         {
-            // Force principale vers l'avant + un peu de force vers le haut
-            Vector3 shootDirection = spawnPoint.forward + (Vector3.up * 0.1f); // R�duit la composante verticale
+            var shootDirection = -transform.forward; // Shooting in the opposite direction
             rb.AddForce(shootDirection.normalized * shootForce, ForceMode.Impulse);
-
-            // Ajoute un peu de rotation al�atoire
-            rb.AddTorque(Random.insideUnitSphere * 10f, ForceMode.Impulse);
-
-            // Log de la direction de tir
-            Debug.Log("Direction de tir : " + shootDirection);
         }
         else
         {
             Debug.LogError("Le prefab du pain n'a pas de Rigidbody!");
         }
 
-        // Incr�mente le compteur de pains tir�s
+        // Increments the shot counter and logs the information
         _painCount++;
 
-        // Affiche le nombre de pains tir�s dans la console
-        Debug.Log("Pain tir� n� " + _painCount + " depuis : " + spawnPoint.position);
-
-        // D�truit le pain apr�s 5 secondes pour �viter l'accumulation
+        // Destroy the bread after 5 seconds to avoid accumulation
         Destroy(painInstance, 5f);
-    }
-
-//POUR VOIR LA DIRECTION DU PAIN
-    private void OnDrawGizmos()
-    {
-        if (spawnPoint != null)
-        {
-            Gizmos.color = Color.red;
-            Gizmos.DrawSphere(spawnPoint.position, 0.1f);
-            Gizmos.DrawRay(spawnPoint.position, spawnPoint.forward * 2f);
-        }
     }
 }
