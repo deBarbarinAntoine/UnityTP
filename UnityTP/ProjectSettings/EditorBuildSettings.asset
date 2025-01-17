@@ -15,7 +15,13 @@ EditorBuildSettings:
     path: Assets/Base/FPS/Scenes/LoseScene.unity
     guid: 72e5c65a45893714484002914e3fd521
   - enabled: 1
-    path: Assets/Base/FPS/Scenes/MainScene.unity
-    guid: d794a2ef8ba31d847ad3c19d03e2ddb9
+    path: Assets/Game/Scenes/sab_kitch.unity
+    guid: 5cc15b5675afe4c45afd66a52de51167
+  - enabled: 1
+    path: Assets/Game/Scenes/kitchen test enemie.unity
+    guid: 12f58d6e68065c44d846900d13130370
+  - enabled: 1
+    path: Assets/Game/Scenes/Kitchen.unity
+    guid: 99bb7604ccd509f2e810160e18af1fbb
   m_configObjects: {}
   m_UseUCBPForAssetBundles: 0
