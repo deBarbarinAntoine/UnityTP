@@ -7,16 +7,16 @@ public class Shooter : MonoBehaviour
     public float shootForce = 5f; // Force du projecrile
     public float fireRate = 0.5f; // Temps de wait entre deux tirs (en secondes)
 
-    private float nextFireTime = 0f; // Chrono cadence de tir
-    private int painCount = 0; // Compteur pour le nombre de pains tir�s
+    private float _nextFireTime = 0f; // Chrono cadence de tir
+    private int _painCount = 0; // Compteur pour le nombre de pains tir�s
 
     private void Update()
     {
         // V�rifie si le joueur appuie sur la touche "Espace" et que le temps entre les tirs est respect�
-        if (Input.GetKey(KeyCode.Space) && Time.time >= nextFireTime)
+        if (Input.GetKey(KeyCode.Space) && Time.time >= _nextFireTime)
         {
             Shoot();
-            nextFireTime = Time.time + fireRate; // D�termine le prochain moment o� on peut tirer
+            _nextFireTime = Time.time + fireRate; // D�termine le prochain moment o� on peut tirer
         }
     }
 
@@ -51,10 +51,10 @@ public class Shooter : MonoBehaviour
         }
 
         // Incr�mente le compteur de pains tir�s
-        painCount++;
+        _painCount++;
 
         // Affiche le nombre de pains tir�s dans la console
-        Debug.Log("Pain tir� n� " + painCount + " depuis : " + spawnPoint.position);
+        Debug.Log("Pain tir� n� " + _painCount + " depuis : " + spawnPoint.position);
 
         // D�truit le pain apr�s 5 secondes pour �viter l'accumulation
         Destroy(painInstance, 5f);
