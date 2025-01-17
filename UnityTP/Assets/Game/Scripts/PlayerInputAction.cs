@@ -62,6 +62,24 @@ public partial class @PlayerInputAction: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": true
+                },
+                {
+                    ""name"": ""Aiming"",
+                    ""type"": ""Button"",
+                    ""id"": ""d665d20e-e85b-4f2b-a9e5-bfa72e9cf99e"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Reaload"",
+                    ""type"": ""Button"",
+                    ""id"": ""dfd0fde2-aab0-4a65-b6cd-8ed32f324fcf"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -174,6 +192,28 @@ public partial class @PlayerInputAction: IInputActionCollection2, IDisposable
                     ""action"": ""Camera"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""7d8dcff0-5623-48f0-bf88-83d0b7c73f87"",
+                    ""path"": ""<Mouse>/rightButton"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Aiming"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""4e2812bd-0686-4668-a119-93e4a073b757"",
+                    ""path"": ""<Keyboard>/r"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Reaload"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         }
@@ -186,6 +226,8 @@ public partial class @PlayerInputAction: IInputActionCollection2, IDisposable
         m_Player_Jump = m_Player.FindAction("Jump", throwIfNotFound: true);
         m_Player_Fire = m_Player.FindAction("Fire", throwIfNotFound: true);
         m_Player_Camera = m_Player.FindAction("Camera", throwIfNotFound: true);
+        m_Player_Aiming = m_Player.FindAction("Aiming", throwIfNotFound: true);
+        m_Player_Reaload = m_Player.FindAction("Reaload", throwIfNotFound: true);
     }
 
     ~@PlayerInputAction()
@@ -256,6 +298,8 @@ public partial class @PlayerInputAction: IInputActionCollection2, IDisposable
     private readonly InputAction m_Player_Jump;
     private readonly InputAction m_Player_Fire;
     private readonly InputAction m_Player_Camera;
+    private readonly InputAction m_Player_Aiming;
+    private readonly InputAction m_Player_Reaload;
     public struct PlayerActions
     {
         private @PlayerInputAction m_Wrapper;
@@ -264,6 +308,8 @@ public partial class @PlayerInputAction: IInputActionCollection2, IDisposable
         public InputAction @Jump => m_Wrapper.m_Player_Jump;
         public InputAction @Fire => m_Wrapper.m_Player_Fire;
         public InputAction @Camera => m_Wrapper.m_Player_Camera;
+        public InputAction @Aiming => m_Wrapper.m_Player_Aiming;
+        public InputAction @Reaload => m_Wrapper.m_Player_Reaload;
         public InputActionMap Get() { return m_Wrapper.m_Player; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -285,6 +331,12 @@ public partial class @PlayerInputAction: IInputActionCollection2, IDisposable
             @Camera.started += instance.OnCamera;
             @Camera.performed += instance.OnCamera;
             @Camera.canceled += instance.OnCamera;
+            @Aiming.started += instance.OnAiming;
+            @Aiming.performed += instance.OnAiming;
+            @Aiming.canceled += instance.OnAiming;
+            @Reaload.started += instance.OnReaload;
+            @Reaload.performed += instance.OnReaload;
+            @Reaload.canceled += instance.OnReaload;
         }
 
         private void UnregisterCallbacks(IPlayerActions instance)
@@ -301,6 +353,12 @@ public partial class @PlayerInputAction: IInputActionCollection2, IDisposable
             @Camera.started -= instance.OnCamera;
             @Camera.performed -= instance.OnCamera;
             @Camera.canceled -= instance.OnCamera;
+            @Aiming.started -= instance.OnAiming;
+            @Aiming.performed -= instance.OnAiming;
+            @Aiming.canceled -= instance.OnAiming;
+            @Reaload.started -= instance.OnReaload;
+            @Reaload.performed -= instance.OnReaload;
+            @Reaload.canceled -= instance.OnReaload;
         }
 
         public void RemoveCallbacks(IPlayerActions instance)
@@ -324,5 +382,7 @@ public partial class @PlayerInputAction: IInputActionCollection2, IDisposable
         void OnJump(InputAction.CallbackContext context);
         void OnFire(InputAction.CallbackContext context);
         void OnCamera(InputAction.CallbackContext context);
+        void OnAiming(InputAction.CallbackContext context);
+        void OnReaload(InputAction.CallbackContext context);
     }
 }
