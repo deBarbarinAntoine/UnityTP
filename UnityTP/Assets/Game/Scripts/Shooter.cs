@@ -3,18 +3,17 @@ using UnityEngine.InputSystem;
 
 public class Shooter : MonoBehaviour
 {
-    public GameObject painPrefab; // R�f�rence au prefab de la tranche de pain
-    public Transform spawnPoint; // Point de sortie des munitions
-    public float shootForce = 5f; // Force du projecrile
-    public float fireRate = 0.5f; // Temps de wait entre deux tirs (en secondes)
+    public GameObject painPrefab; // Reference to the bread prefab
+    public Transform spawnPoint; // Spawn point for the projectiles
+    public float shootForce = 5f; // Force of the projectile
+    public float fireRate = 0.5f; // Time between shots (in seconds)
 
+    private bool _isShooting; // Track if the player is holding down the shoot button
 
     private PlayerInputAction _myInputAction;
-
-    private float _nextFireTime; // Chrono cadence de tir
-    private int _painCount; // Compteur pour le nombre de pains tir�s
+    private float _nextFireTime; // Timer for fire rate
+    private int _painCount; // Counter for the number of breads shot
     private InputAction _shootAction;
-
 
     // Initialization
     private void Awake()
@@ -22,10 +21,17 @@ public class Shooter : MonoBehaviour
         _myInputAction = new PlayerInputAction();
     }
 
+    private void FixedUpdate()
+    {
+        // Keep shooting while the button is held down and enough time has passed between shots
+        if (_isShooting && Time.time >= _nextFireTime) Shoot();
+    }
+
     private void OnEnable()
     {
         _shootAction = _myInputAction.Player.Fire;
-        _shootAction.performed += Shoot;
+        _shootAction.started += StartShooting; // Start shooting when the button is pressed
+        _shootAction.canceled += StopShooting; // Stop shooting when the button is released
         _shootAction.Enable();
     }
 
@@ -34,7 +40,19 @@ public class Shooter : MonoBehaviour
         _shootAction.Disable();
     }
 
-    private void Shoot(InputAction.CallbackContext callbackContext)
+    // Start shooting when button is pressed
+    private void StartShooting(InputAction.CallbackContext context)
+    {
+        _isShooting = true;
+    }
+
+    // Stop shooting when button is released
+    private void StopShooting(InputAction.CallbackContext context)
+    {
+        _isShooting = false;
+    }
+
+    private void Shoot()
     {
         // Check if enough time has passed before shooting again
         if (Time.time < _nextFireTime) return; // If the cooldown hasn't passed, don't shoot
@@ -50,7 +68,7 @@ public class Shooter : MonoBehaviour
 
         // Scale down the bread object
         painInstance.transform.localScale = new Vector3(0.5f, 0.5f, 0.5f);
-        
+
         // Add the BreadCollision script to handle collision
         painInstance.AddComponent<BreadCollision>();
 
