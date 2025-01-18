@@ -8,6 +8,10 @@ public class Shooter : MonoBehaviour
     public float shootForce = 5f; // Force of the projectile
     public float fireRate = 0.5f; // Time between shots (in seconds)
 
+    private InputAction _aimAction;
+    private Vector3 _aimDirection; // Direction to shoot based on camera view
+    private bool _isAiming; // Track if the player is holding down the aiming button
+
     private bool _isShooting; // Track if the player is holding down the shoot button
 
     private PlayerInputAction _myInputAction;
@@ -38,6 +42,7 @@ public class Shooter : MonoBehaviour
     private void OnDisable()
     {
         _shootAction.Disable();
+        _aimAction.Disable();
     }
 
     // Start shooting when button is pressed
@@ -54,8 +59,8 @@ public class Shooter : MonoBehaviour
 
     private void Shoot()
     {
-        // Check if enough time has passed before shooting again
-        if (Time.time < _nextFireTime) return; // If the cooldown hasn't passed, don't shoot
+        // Check if enough time has passed before shooting again (fire rate control)
+        if (Time.time < _nextFireTime) return;
 
         // Update the next fire time based on the current time and the fire rate
         _nextFireTime = Time.time + fireRate;
@@ -63,28 +68,41 @@ public class Shooter : MonoBehaviour
         // Create an instance of the bread prefab
         var painInstance = Instantiate(painPrefab, spawnPoint.position, spawnPoint.rotation);
 
-        // Rotate the prefab 180° along the X-axis (if needed)
-        painInstance.transform.Rotate(180f, 0f, 0f);
+        // Get the direction from the prefab to the camera
+        var directionToCamera = Camera.main.transform.rotation;
+        
+        // apply an additional rotation to the prefab
+        painInstance.transform.rotation = directionToCamera;
 
         // Scale down the bread object
-        painInstance.transform.localScale = new Vector3(0.5f, 0.5f, 0.5f);
+        painInstance.transform.localScale = new Vector3(0.3f, 0.3f, 0.3f);
 
         // Add the BreadCollision script to handle collision
         painInstance.AddComponent<BreadCollision>();
 
-        // Apply force to propel the bread in the opposite direction
+        // Apply force to propel the bread in the calculated direction (3D)
         var rb = painInstance.GetComponent<Rigidbody>();
         if (rb != null)
         {
-            var shootDirection = -transform.forward; // Shooting in the opposite direction
-            rb.AddForce(shootDirection.normalized * shootForce, ForceMode.Impulse);
+            if (Camera.main)
+            {
+                var cameraForward = Camera.main.transform.forward;
+                // Normalize the direction to avoid unintended scale due to angles
+                var shootDirection = cameraForward.normalized;
+
+                rb.AddForce(shootDirection * shootForce, ForceMode.Impulse);
+            }
+            else
+            {
+                Debug.LogWarning("Camera not found");
+            }
         }
         else
         {
-            Debug.LogError("Le prefab du pain n'a pas de Rigidbody!");
+            Debug.LogError("The bread prefab does not have a Rigidbody component!");
         }
 
-        // Increments the shot counter and logs the information
+        // Increment the shot counter and log the information
         _painCount++;
 
         // Destroy the bread after 5 seconds to avoid accumulation
