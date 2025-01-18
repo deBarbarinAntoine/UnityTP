@@ -371,7 +371,7 @@ Transform:
   m_GameObject: {fileID: 189545755}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: -2}
+  m_LocalPosition: {x: 0, y: 0.2, z: -0.5}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -3495,7 +3495,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 10, y: 10, z: 10}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 1950717018}
@@ -3773,10 +3773,10 @@ GameObject:
   - component: {fileID: 1950717018}
   - component: {fileID: 1950717017}
   - component: {fileID: 1950717016}
-  - component: {fileID: 1950717015}
   - component: {fileID: 1950717014}
   - component: {fileID: 1950717019}
   - component: {fileID: 1950717020}
+  - component: {fileID: 1950717021}
   m_Layer: 0
   m_Name: PLayer Test
   m_TagString: Untagged
@@ -3811,27 +3811,6 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 80
   m_CollisionDetection: 0
---- !u!65 &1950717015
-BoxCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1950717012}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 0
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 3
-  m_Size: {x: 1, y: 1, z: 1}
-  m_Center: {x: 0, y: 0, z: 0}
 --- !u!23 &1950717016
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -3884,7 +3863,7 @@ MeshFilter:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1950717012}
-  m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+  m_Mesh: {fileID: -6509739244845884241, guid: a4595afe082c14292a6a0728f327f0a9, type: 3}
 --- !u!4 &1950717018
 Transform:
   m_ObjectHideFlags: 0
@@ -3895,7 +3874,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 4.785, y: 3.596, z: -25.757}
-  m_LocalScale: {x: 0.05, y: 0.05, z: 0.05}
+  m_LocalScale: {x: 0.2, y: 0.2, z: 0.2}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 1903935034}
@@ -3918,6 +3897,7 @@ MonoBehaviour:
   jumpPower: 3
   lookSpeed: 20
   cameraOffset: {x: 0, y: 0.5, z: -0.5}
+  aimingOffset: {x: 0, y: 0, z: -0.1}
 --- !u!114 &1950717020
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3933,8 +3913,30 @@ MonoBehaviour:
   painPrefab: {fileID: 8760033376338419293, guid: 8bae0acbb4eeba841bd8ccd50ed97325,
     type: 3}
   spawnPoint: {fileID: 189545756}
-  shootForce: 5
+  shootForce: 1
   fireRate: 0.5
+--- !u!64 &1950717021
+MeshCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1950717012}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 5
+  m_Convex: 1
+  m_CookingOptions: 30
+  m_Mesh: {fileID: -6509739244845884241, guid: a4595afe082c14292a6a0728f327f0a9, type: 3}
 --- !u!1 &1981612185 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 5245927130461468389, guid: 7df9f3f2c0d604965971dc955ee37030,
