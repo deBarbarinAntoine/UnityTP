@@ -2,68 +2,53 @@ using UnityEngine;
 
 public class EnemyShooter : MonoBehaviour
 {
-    public GameObject projectilePrefab; // Référence au prefab de l'objet à lancer
-    public Transform spawnPoint; // Point de sortie des munitions
-    public float shootForce = 15f; // Force de projection
-    public float fireRate = 2f; // Temps entre deux tirs  en s
-    public Transform player; // cible joueur
+    public GameObject projectilePrefab; // Reference to the projectile prefab
+    public Transform spawnPoint; // Point from where projectiles will be spawned
+    public float shootForce = 5f; // Force applied to the projectile
+    public float fireRate = 2f; // Time between two shots in seconds
+    public Transform player; // The player's position (target)
+    public float shootingRange = 10f; // Maximum distance at which the enemy can shoot
 
-    private float nextFireTime = 0f; //  cadence de tir
+    private float _nextFireTime; // Time for the next shot
 
-    private void Update()
+    private void FixedUpdate()
     {
-        if (player != null && Time.time >= nextFireTime)
+        if (player != null)
         {
-            Shoot();
-            nextFireTime = Time.time + fireRate; // Détermine le prochain moment où on peut tirer
+            // Calculate the distance between the enemy and the player
+            float distanceToPlayer = Vector3.Distance(transform.position, player.position);
+
+            // Check if the player is within the shooting range and if enough time has passed for the next shot
+            if (distanceToPlayer <= shootingRange && Time.time >= _nextFireTime)
+            {
+                Shoot();
+                _nextFireTime = Time.time + fireRate; // Set the next available fire time
+            }
         }
     }
 
     private void Shoot()
     {
-        if (projectilePrefab == null || spawnPoint == null)
-        {
-            Debug.LogError("Projectile prefab ou spawnPoint non assigné !");
-            return;
-        }
-
-        //  instance du prefab
+        // Instantiate the projectile prefab
         GameObject projectileInstance = Instantiate(projectilePrefab, spawnPoint.position, spawnPoint.rotation);
 
-        // force pour propulser le projectile vers le joueur
+        // Get the Rigidbody component to apply force
         Rigidbody rb = projectileInstance.GetComponent<Rigidbody>();
+        // Add BreadCollision script to handle collision
+        projectileInstance.AddComponent<BreadCollision>();
+
         if (rb != null)
         {
-            // Calcule la direction vers le joueur
+            // Calculate the direction to the player and apply force
             Vector3 shootDirection = (player.position - spawnPoint.position).normalized;
             rb.AddForce(shootDirection * shootForce, ForceMode.Impulse);
-            Debug.LogError("Projectile lancé");
         }
         else
         {
-            Debug.LogError("Le prefab du projectile n'a pas de Rigidbody !");
+            Debug.LogError("Projectile prefab does not have a Rigidbody!");
         }
 
-        // Détruit le projectile après 5 secondes pour éviter l'accumulation
+        // Destroy the projectile after 5 seconds to avoid accumulation
         Destroy(projectileInstance, 5f);
     }
-
-
-    //private void OnDrawGizmos()
-    //{
-    //    if (spawnPoint != null)
-    //    {
-    //        Gizmos.color = Color.red;
-    //        Gizmos.DrawSphere(spawnPoint.position, 0.1f); // Point de spawn
-
-    //        // Dessine une ligne pour représenter la direction de tir
-    //        Vector3 shootDirection = spawnPoint.forward * 2f; // Longueur de la ligne
-    //        Gizmos.DrawRay(spawnPoint.position, shootDirection); // Direction de tir
-
-    //        // Optionnel : dessiner la trajectoire du projectile
-    //        Vector3 trajectoryEnd = spawnPoint.position + shootDirection; // Point final de la trajectoire
-    //        Gizmos.color = Color.blue; // Couleur de la trajectoire
-    //        Gizmos.DrawLine(spawnPoint.position, trajectoryEnd); // Trajectoire
-    //    }
-    //}
 }
